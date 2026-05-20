@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Happy Birthday 🎂</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --blue-deep: #1d4ed8;
+  --blue-mid: #3b82f6;
+  --blue-light: #93c5fd;
+  --blue-pale: #dbeafe;
+  --blue-ghost: #eff6ff;
+  --cream: #fefefe;
+  --ink: #1e3a5f;
+}
+
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  font-family: 'Sarabun', sans-serif;
+  background: #e8f2fd;
+  color: var(--ink);
+}
+
+/* ===== STARS BG ===== */
+#stars {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+}
+.star {
+  position: absolute; border-radius: 50%; background: white;
+  opacity: 0; animation: twinkle var(--d) ease-in-out infinite var(--delay);
+}
+@keyframes twinkle {
+  0%,100% { opacity: 0; transform: scale(0.4); }
+  50% { opacity: 0.6; transform: scale(1); }
+}
+
+/* ===== PAGE SYSTEM ===== */
+.page {
+  position: fixed; inset: 0; z-index: 10;
+  transition: opacity 0.5s, transform 0.5s;
+}
+.page.hidden { opacity: 0; pointer-events: none; transform: translateY(16px); }
+.page.visible { opacity: 1; pointer-events: all; transform: translateY(0); }
+
+/* ===== INTRO PAGE ===== */
+#p0 {
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 20px;
+}
+.intro-icon { font-size: 72px; animation: float 3s ease-in-out infinite; }
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+.intro-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(22px, 6vw, 38px); color: var(--blue-deep); text-align: center;
+}
+.intro-sub { font-size: 13px; color: var(--blue-light); letter-spacing: 3px; text-align: center; }
+.start-btn {
+  margin-top: 8px; padding: 12px 40px;
+  background: var(--blue-mid); color: white; border: none; border-radius: 999px;
+  font-size: 15px; font-family: 'Sarabun', sans-serif; cursor: pointer;
+  box-shadow: 0 6px 24px rgba(59,130,246,0.4);
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  letter-spacing: 1px;
+}
+.start-btn:hover { background: var(--blue-deep); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(59,130,246,0.5); }
+
+/* ===== LETTERS PAGE ===== */
+#p1 {
+  overflow-y: auto; overflow-x: hidden;
+  display: flex; flex-direction: column;
+  align-items: center; padding: 40px 20px 60px;
+  gap: 0;
+}
+
+.letters-hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 24px;
+  flex-shrink: 0;
+}
+.hero-text {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 10vw, 72px);
+  color: var(--blue-deep); line-height: 1.3;
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.8s, transform 0.8s;
+}
+.hero-text.show { opacity: 1; transform: translateY(0); }
+
+ .hero-arrow {
+  margin-top: 40px; font-size: 56px;
+  color: var(--blue-mid);
+  opacity: 0;
+  animation: arrow-bounce 1.2s ease-in-out infinite;
+  transition: opacity 0.6s 1.2s;
+}
+.hero-arrow.show { opacity: 1; }
+@keyframes arrow-bounce {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(10px); }
+}
+
+/* ===== ENVELOPE ROW ===== */
+.env-row {
+  display: flex; flex-wrap: wrap; width: 100%; max-width: 640px;
+  margin-bottom: 120px; opacity: 0; transform: translateY(20px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+.env-row.show { opacity: 1; transform: translateY(0); }
+.env-row.left { justify-content: flex-start; padding-left: 0; }
+.env-row.right { justify-content: flex-end; padding-right: 0; }
+
+/* ===== ENVELOPE ===== */
+.env-wrap {
+  width: min(300px, 82vw);
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.25s;
+}
+.env-wrap.locked { cursor: not-allowed; filter: grayscale(0.3); }
+.env-wrap:not(.locked):not(.opened):hover { transform: scale(1.04) translateY(-3px); }
+.env-wrap.opened { cursor: default; }
+
+/* The envelope box */
+.envelope {
+  width: 100%;
+  position: relative;
+  border-radius: 4px 4px 8px 8px;
+  box-shadow: 0 8px 32px rgba(59,130,246,0.18), 0 2px 8px rgba(0,0,0,0.06);
+  overflow: visible; /* allow card to peek above */
+}
+
+/* Envelope body */
+.env-body {
+  width: 100%;
+  padding-top: 65%; /* aspect ratio ~1.6:1 */
+  position: relative;
+  background: linear-gradient(145deg, #dbeafe 0%, #eff6ff 100%);
+  border-radius: 0 0 8px 8px;
+  border: 1.5px solid #93c5fd;
+  border-top: none;
+  overflow: hidden;
+}
+
+/* Bottom triangle fold lines inside envelope body */
+.env-body::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(to bottom-right, transparent calc(50% - 1px), #bfdbfe calc(50% - 1px), #bfdbfe calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+    linear-gradient(to bottom-left,  transparent calc(50% - 1px), #bfdbfe calc(50% - 1px), #bfdbfe calc(50% + 0.5px), transparent calc(50% + 0.5px));
+  opacity: 0.6;
+}
+
+/* Envelope label inside */
+.env-inner-label {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 6px;
+  pointer-events: none;
+}
+.env-emoji { font-size: clamp(28px,7vw,38px); }
+.env-label-text {
+  font-size: clamp(10px,2.5vw,12px); color: var(--blue-deep);
+  letter-spacing: 2.5px; font-weight: 600; text-transform: uppercase;
+}
+.env-hint {
+  font-size: clamp(10px,2.5vw,11px); color: var(--blue-light);
+}
+.env-hint.locked-hint { color: #f87171; }
+
+/* ===== FLAP ===== */
+.env-flap-wrap {
+  position: absolute; top: 0; left: 0; right: 0;
+  /* flap height = half of body height (body uses padding-top:65% of width) */
+  height: 0;
+  /* we'll set actual height via JS or use a trick */
+}
+
+.env-flap {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  /* triangle pointing down */
+  width: 100%; height: 0;
+  border-left: calc(min(300px,82vw)/2 + 2px) solid transparent;
+  border-right: calc(min(300px,82vw)/2 + 2px) solid transparent;
+  border-top: calc(min(300px,82vw) * 0.33) solid #bfdbfe;
+  transform-origin: top center;
+  transition: transform 0.7s cubic-bezier(0.4,0,0.2,1);
+  filter: drop-shadow(0 2px 4px rgba(59,130,246,0.15));
+  z-index: 10;
+}
+
+.env-flap-container {
+  position: absolute;
+  top: 0; left: -1.5px; right: -1.5px;
+  z-index: 10;
+  overflow: hidden; /* while closed, flap is visible; we let it overflow when open */
+  transform-style: preserve-3d;
+  perspective: 800px;
+}
+/* trick: when open we allow overflow */
+.env-wrap.opened .env-flap-container { overflow: visible; }
+
+.env-flap-container .env-flap-triangle {
+  width: 0; height: 0;
+  border-left: calc(min(150px,41vw) + 1.5px) solid transparent;
+  border-right: calc(min(150px,41vw) + 1.5px) solid transparent;
+  border-top: calc(min(300px,82vw) * 0.36) solid #bfdbfe;
+  transform-origin: 50% 0%;
+  transition: transform 0.7s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+  filter: drop-shadow(0 3px 6px rgba(59,130,246,0.2));
+}
+.env-flap-container .env-flap-triangle::after {
+  content: '';
+  position: absolute;
+  top: calc(-1 * min(300px,82vw) * 0.36);
+  left: calc(-1 * (min(150px,41vw) + 1.5px));
+  width: 0; height: 0;
+  border-left: calc(min(150px,41vw) + 1.5px) solid transparent;
+  border-right: calc(min(150px,41vw) + 1.5px) solid transparent;
+  border-top: calc(min(300px,82vw) * 0.33) solid #dbeafe;
+}
+.env-wrap.opened .env-flap-triangle {
+  transform: rotateX(-170deg);
+}
+
+.blow-btn {
+  margin-top: 16px;
+  padding: 10px 32px;
+  background: var(--blue-mid); color: white; border: none; border-radius: 999px;
+  font-size: 14px; font-family: 'Sarabun', sans-serif; cursor: pointer;
+  box-shadow: 0 4px 16px rgba(59,130,246,0.3);
+  letter-spacing: 1px;
+  opacity: 0; transform: translateY(8px);
+  transition: opacity 0.4s, transform 0.4s, background 0.2s;
+  pointer-events: none;
+}
+.blow-btn.show { opacity: 1; transform: translateY(0); pointer-events: all; }
+.blow-btn:hover { background: var(--blue-deep); }
+
+/* ===== LETTER CARD ===== */
+.letter-card {
+  position: absolute;
+  left: 8%; width: 84%;
+  bottom: 12%;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #bfdbfe;
+  box-shadow: 0 4px 20px rgba(59,130,246,0.12);
+  padding: clamp(14px,3.5vw,22px);
+  text-align: center;
+  z-index: 1; /* behind flap */
+  /* starts hidden inside envelope */
+  transform: translateY(0);
+  opacity: 0;
+  transition: transform 0.6s 0.5s cubic-bezier(0.34,1.2,0.64,1), opacity 0.4s 0.5s;
+  pointer-events: none;
+}
+.env-wrap.opened .letter-card {
+  transform: translateY(-80%);
+  opacity: 1;
+  pointer-events: all;
+  z-index: 12; /* above flap when open */
+}
+.card-emoji { font-size: clamp(28px,7vw,40px); margin-bottom: 8px; display: block; }
+.card-text {
+  font-size: clamp(13px,3.2vw,15px); color: var(--ink); line-height: 1.8;
+}
+
+
+
+
+
+/* ===== FINALE PAGE ===== */
+#p3 {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 10px;
+}
+.hb-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px,9vw,72px); color: var(--blue-deep);
+  text-align: center; line-height: 1.1;
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.8s, transform 0.8s;
+}
+.hb-title.show { opacity: 1; transform: translateY(0); }
+.hb-name {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: clamp(22px,6vw,48px); color: var(--blue-mid);
+  text-align: center;
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.8s 0.35s, transform 0.8s 0.35s;
+  margin-bottom: 8px;
+}
+.hb-name.show { opacity: 1; transform: translateY(0); }
+
+#cake-btn {
+  cursor: pointer; background: none; border: none; padding: 0;
+  opacity: 0; transform: scale(0.85);
+  transition: opacity 0.7s 0.7s, transform 0.7s 0.7s;
+}
+#cake-btn.show { opacity: 1; transform: scale(1); }
+#cake-btn:hover { transform: scale(1.06); }
+#cake-btn:active { transform: scale(0.97); }
+
+.cake-svg { width: clamp(110px,28vw,160px); height: auto; }
+.candle-flame {
+  animation: flicker 0.8s ease-in-out infinite alternate;
+  transform-origin: 80px 18px;
+}
+
+@keyframes flicker {
+  from { transform: scale(1) rotate(-2deg); opacity: 1; }
+  to   { transform: scale(1.08) rotate(2deg); opacity: 0.9; }
+}
+#cake-btn.blown .candle-flame { display: none; }
+#cake-btn.blown .candle-smoke { display: block !important; animation: smoke-rise 1.5s ease-out forwards; }
+@keyframes smoke-rise {
+  0% { opacity: 0.8; transform: translateY(0) scaleX(1); }
+  100% { opacity: 0; transform: translateY(-22px) scaleX(2.5); }
+}
+.cake-hint { font-size: 12px; color: var(--blue-light); letter-spacing: 1px; margin-top: 4px; }
+
+/* ===== DARK OVERLAY ===== */
+#dark-overlay {
+  position: fixed; inset: 0; background: #000;
+  opacity: 0; pointer-events: none;
+  transition: opacity 1.5s; z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+}
+#dark-overlay.on { opacity: 1; pointer-events: all; }
+#dark-msg {
+  color: white; text-align: center; padding: 28px;
+  opacity: 0; transform: scale(0.9);
+  transition: opacity 1s 1s, transform 1s 1s;
+}
+#dark-overlay.on #dark-msg { opacity: 1; transform: scale(1); }
+#dark-msg .big {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(26px,7vw,52px); color: white; display: block; margin-bottom: 14px;
+}
+#dark-msg p { font-size: clamp(15px,4vw,20px); line-height: 1.9; color: #bfdbfe; }
+
+/* ===== CONFETTI ===== */
+.confetti-piece {
+  position: fixed; width: 8px; height: 8px;
+  border-radius: 2px; pointer-events: none; z-index: 300;
+  animation: confetti-fall var(--dur) ease-in forwards var(--delay);
+}
+@keyframes confetti-fall {
+  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+/* bg deco */
+.bg-blob {
+  position: fixed; border-radius: 50%; pointer-events: none; z-index: 1;
+  background: radial-gradient(circle, rgba(147,197,253,0.15) 0%, transparent 70%);
+}
+</style>
+</head>
+<body>
+
+<div id="stars"></div>
+<div class="bg-blob" style="width:500px;height:500px;top:-150px;right:-150px;"></div>
+<div class="bg-blob" style="width:380px;height:380px;bottom:-100px;left:-100px;"></div>
+
+<!-- DARK OVERLAY -->
+<div id="dark-overlay">
+  <div id="dark-msg">
+    <span class="big">🎂 Happy Birthday!</span>
+    <p id="dark-text"></p>
+  </div>
+</div>
+
+<!-- PAGE 0: INTRO -->
+<div class="page visible" id="p0">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:18px;padding:20px;text-align:center;">
+    <div class="intro-icon">📬</div>
+    <h1 class="intro-title">มีจดหมายถึงคุณ</h1>
+    <p class="intro-sub">SPECIAL LETTERS FOR YOU</p>
+    <button class="start-btn" onclick="startLetters()">เปิดดูเลย ✨</button>
+  </div>
+</div>
+
+<!-- PAGE 1: ALL ENVELOPES -->
+<div class="page hidden" id="p1">
+  <div class="letters-hero" id="lettersHeader">
+    <div class="hero-text" id="heroText">
+      กูมีอะไรอยาก<br>จะบอกมึงมานานเเล้วอิน
+    </div>
+    <div class="hero-arrow" id="heroArrow">↓</div>
+  </div>
+  <div id="envelopes-container"></div>
+</div>
+
+
+
+<!-- PAGE 3: FINALE -->
+<div class="page hidden" id="p3">
+  <button id="cake-btn" onclick="blowCandle()" title="กดเป่าเทียน">
+    <svg class="cake-svg" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="80" cy="136" rx="62" ry="10" fill="#bfdbfe" opacity="0.45"/>
+      <rect x="22" y="96" width="116" height="40" rx="10" fill="#dbeafe"/>
+      <rect x="22" y="96" width="116" height="10" rx="5" fill="#93c5fd"/>
+      <rect x="32" y="66" width="96" height="34" rx="8" fill="#eff6ff"/>
+      <rect x="32" y="66" width="96" height="10" rx="5" fill="#bfdbfe"/>
+      <rect x="44" y="43" width="72" height="27" rx="7" fill="#dbeafe"/>
+      <rect x="44" y="43" width="72" height="9" rx="4" fill="#93c5fd"/>
+      <ellipse cx="60" cy="43" rx="7" ry="5" fill="white" opacity="0.8"/>
+      <ellipse cx="80" cy="41" rx="8" ry="6" fill="white" opacity="0.8"/>
+      <ellipse cx="100" cy="43" rx="7" ry="5" fill="white" opacity="0.8"/>
+      <circle cx="50" cy="89" r="4" fill="#93c5fd"/>
+      <circle cx="80" cy="89" r="4" fill="#60a5fa"/>
+      <circle cx="110" cy="89" r="4" fill="#93c5fd"/>
+      <circle cx="65" cy="81" r="3" fill="#bfdbfe"/>
+      <circle cx="95" cy="81" r="3" fill="#bfdbfe"/>
+      <rect x="74" y="19" width="12" height="26" rx="4" fill="#3b82f6"/>
+      <rect x="76" y="19" width="8" height="4" rx="2" fill="#1d4ed8" opacity="0.5"/>
+      <line x1="80" y1="19" x2="80" y2="15" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/>
+      <g class="candle-flame">
+        <ellipse cx="80" cy="11" rx="5" ry="7" fill="#fbbf24"/>
+        <ellipse cx="80" cy="12" rx="3" ry="4.5" fill="#fde68a"/>
+        <ellipse cx="80" cy="13" rx="1.5" ry="2.5" fill="white" opacity="0.7"/>
+      </g>
+      <g class="candle-smoke" style="display:none;">
+        <ellipse cx="80" cy="9" rx="3" ry="2" fill="#94a3b8" opacity="0.6"/>
+        <ellipse cx="79" cy="6" rx="2" ry="1.5" fill="#94a3b8" opacity="0.4"/>
+      </g>
+    </svg>
+    <p class="cake-hint">กดเป่าเทียน 🕯️</p>
+  </button>
+</div>
+
+<script>
+// ============ CONFIG ============
+const letters = [
+  { emoji: '💌', label: 'จดหมายที่ 1', text: 'ใส่ข้อความของคุณที่นี่ซองที่ 1' },
+  { emoji: '🌸', label: 'จดหมายที่ 2', text: 'ใส่ข้อความของคุณที่นี่ซองที่ 2' },
+  { emoji: '⭐', label: 'จดหมายที่ 3', text: 'ใส่ข้อความของคุณที่นี่ซองที่ 3' },
+  { emoji: '🎀', label: 'จดหมายที่ 4', text: 'ใส่ข้อความของคุณที่นี่ซองที่ 4' },
+  { emoji: '💙', label: 'จดหมายที่ 5 (พิเศษ)', text: 'ใส่ข้อความของคุณที่นี่ซองที่ 5' },
+];
+
+
+const darkMessage = 'ขอให้วันนี้เป็นวันที่ดีที่สุด<br>และความสุขจงอยู่กับคุณตลอดไป';
+// ============ END CONFIG ============
+
+
+document.getElementById('dark-text').innerHTML = darkMessage;
+
+let openedCount = 0;
+let currentPageId = 'p0';
+
+// STARS
+(function() {
+  const c = document.getElementById('stars');
+  for (let i = 0; i < 45; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 4 + 2;
+    s.style.cssText = `width:${size}px;height:${size}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${2+Math.random()*4}s;--delay:${Math.random()*5}s`;
+    c.appendChild(s);
+  }
+})();
+
+// BUILD ENVELOPES
+function buildEnvelopes() {
+  const container = document.getElementById('envelopes-container');
+  container.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:0;width:100%;max-width:640px;padding:0 16px 60px;';
+  letters.forEach((d, i) => {
+    const idx = i + 1;
+    const isLast = idx === letters.length;
+    const side = i % 2 === 0 ? 'left' : 'right';
+
+    // Row
+    const row = document.createElement('div');
+    row.className = `env-row ${side}`;
+    row.id = `row${idx}`;
+    row.style.marginBottom = '120px';
+
+    // Wrapper
+    const wrap = document.createElement('div');
+    wrap.className = 'env-wrap' + (idx > 1 ? ' locked' : '');
+    wrap.id = `envwrap${idx}`;
+    wrap.onclick = () => tryOpen(idx);
+
+    // Envelope
+    const env = document.createElement('div');
+    env.className = 'envelope';
+
+    // Flap container (on top, z-index 10)
+    const flapContainer = document.createElement('div');
+    flapContainer.className = 'env-flap-container';
+    flapContainer.id = `flapcont${idx}`;
+
+    const triangle = document.createElement('div');
+    triangle.className = 'env-flap-triangle';
+    triangle.id = `flap${idx}`;
+    flapContainer.appendChild(triangle);
+
+    // Body
+    const body = document.createElement('div');
+    body.className = 'env-body';
+
+    const innerLabel = document.createElement('div');
+    innerLabel.className = 'env-inner-label';
+    innerLabel.id = `label${idx}`;
+    innerLabel.innerHTML = `
+      <span class="env-emoji">${d.emoji}</span>
+      <span class="env-label-text">${d.label}</span>
+      <span class="env-hint ${idx > 1 ? 'locked-hint' : ''}" id="hint${idx}">${idx > 1 ? '🔒 เปิดซองก่อนหน้าก่อน' : 'กดเพื่อเปิด'}</span>
+    `;
+    body.appendChild(innerLabel);
+
+    // Letter card
+    const card = document.createElement('div');
+    card.className = 'letter-card';
+    card.id = `card${idx}`;
+    card.innerHTML = `
+      <span class="card-emoji">${d.emoji}</span>
+      <p class="card-text">${d.text}</p>
+    `;
+
+    env.appendChild(flapContainer);
+    env.appendChild(body);
+    env.appendChild(card);
+
+
+
+    wrap.appendChild(env);
+    row.appendChild(wrap);
+  
+    container.appendChild(row);
+  });
+}
+
+function tryOpen(idx) {
+  const wrap = document.getElementById(`envwrap${idx}`);
+  if (wrap.classList.contains('locked') || wrap.classList.contains('opened')) return;
+
+  // Open it
+  wrap.classList.add('opened');
+  wrap.classList.remove('locked');
+
+  // Animate hint text
+  const hint = document.getElementById(`hint${idx}`);
+  if (hint) hint.style.display = 'none';
+
+  // Show nav button after delay
+  setTimeout(() => {
+    const btn = document.getElementById(`nav${idx}`);
+    if (btn) btn.classList.add('show');
+  }, 900);
+
+  openedCount++;
+
+  // Unlock next
+  const nextWrap = document.getElementById(`envwrap${idx + 1}`);
+  if (nextWrap) {
+    nextWrap.classList.remove('locked');
+    const nextHint = document.getElementById(`hint${idx + 1}`);
+    if (nextHint) {
+      nextHint.classList.remove('locked-hint');
+      nextHint.textContent = 'กดเพื่อเปิด';
+    }
+  }
+if (idx === letters.length) {
+  const btn = document.createElement('button');
+  btn.className = 'blow-btn';
+  btn.textContent = '🎂 ไปเป่าเค้กกัน!';
+  btn.onclick = () => goTo('p3');
+const btnWrap = document.createElement('div');
+btnWrap.style.cssText = 'width:100%; display:flex; justify-content:center; margin-top:24px;';
+btnWrap.appendChild(btn);
+document.getElementById(`row${idx}`).appendChild(btnWrap);
+  setTimeout(() => btn.classList.add('show'), 1000);
+}
+
+}
+
+
+
+
+
+function goTo(pageId) {
+  const prev = document.getElementById(currentPageId);
+  const next = document.getElementById(pageId);
+  prev.classList.remove('visible'); prev.classList.add('hidden');
+  next.classList.remove('hidden'); next.classList.add('visible');
+  currentPageId = pageId;
+  if (pageId === 'p3') startFinale();
+}
+
+function startLetters() {
+  buildEnvelopes();
+  goTo('p1');
+  // Stagger row + header appearance
+  setTimeout(() => document.getElementById('heroText').classList.add('show'), 200);
+setTimeout(() => document.getElementById('heroArrow').classList.add('show'), 800);
+  letters.forEach((_, i) => {
+    setTimeout(() => {
+      document.getElementById(`row${i+1}`)?.classList.add('show');
+    }, 200 + i * 120);
+  });
+}
+
+function startFinale() {
+
+  setTimeout(() => document.getElementById('cake-btn').classList.add('show'), 900);
+  spawnConfetti();
+}
+
+function blowCandle() {
+  const btn = document.getElementById('cake-btn');
+  if (btn.classList.contains('blown')) return;
+  btn.classList.add('blown');
+  btn.onclick = null;
+  setTimeout(() => {
+    document.getElementById('dark-overlay').classList.add('on');
+  }, 900);
+}
+
+function spawnConfetti() {
+  const colors = ['#3b82f6','#60a5fa','#93c5fd','#bfdbfe','#ffffff','#1d4ed8','#fde68a'];
+  for (let i = 0; i < 70; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.cssText = `left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};--dur:${1.5+Math.random()*2.5}s;--delay:${Math.random()*2}s`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 5000);
+  }
+}
+</script>
+</body>
+</html>

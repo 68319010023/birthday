@@ -165,13 +165,17 @@ body {
 .env-inner-label {
   position: absolute; inset: 0;
   display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 6px;
+  align-items: center; 
+  justify-content: center; 
+  gap: 6px;
   pointer-events: none;
 }
 .env-emoji { font-size: clamp(28px,7vw,38px); }
 .env-label-text {
+   
   font-size: clamp(10px,2.5vw,12px); color: var(--blue-deep);
   letter-spacing: 2.5px; font-weight: 600; text-transform: uppercase;
+ 
 }
 .env-hint {
   font-size: clamp(10px,2.5vw,11px); color: var(--blue-light);
@@ -215,7 +219,7 @@ body {
   width: 0; height: 0;
   border-left: calc(min(150px,41vw) + 1.5px) solid transparent;
   border-right: calc(min(150px,41vw) + 1.5px) solid transparent;
-  border-top: calc(min(300px,82vw) * 0.36) solid #bfdbfe;
+  border-top: calc(min(300px,82vw) * 0.24) solid #bfdbfe;
   transform-origin: 50% 0%;
   transition: transform 0.7s cubic-bezier(0.4,0,0.2,1);
   position: relative;
@@ -224,12 +228,12 @@ body {
 .env-flap-container .env-flap-triangle::after {
   content: '';
   position: absolute;
-  top: calc(-1 * min(300px,82vw) * 0.36);
+  top: calc(-1 * min(300px,82vw) * 0.24);
   left: calc(-1 * (min(150px,41vw) + 1.5px));
   width: 0; height: 0;
   border-left: calc(min(150px,41vw) + 1.5px) solid transparent;
   border-right: calc(min(150px,41vw) + 1.5px) solid transparent;
-  border-top: calc(min(300px,82vw) * 0.33) solid #dbeafe;
+  border-top: calc(min(300px,82vw) * 0.21) solid #dbeafe;
 }
 .env-wrap.opened .env-flap-triangle {
   transform: rotateX(-170deg);
@@ -388,7 +392,7 @@ body {
 <div class="page visible" id="p0">
   <div style="display:flex;flex-direction:column;align-items:center;gap:18px;padding:20px;text-align:center;">
     <div class="intro-icon">📬</div>
-    <h1 class="intro-title">มีจดหมายถึงคุณ</h1>
+    <h1 class="intro-title">มีจดหมายถึงมึง</h1>
     <p class="intro-sub">SPECIAL LETTERS FOR YOU</p>
     <button class="start-btn" onclick="startLetters()">เปิดดูเลย ✨</button>
   </div>
@@ -446,15 +450,15 @@ body {
 <script>
 // ============ CONFIG ============
 const letters = [
-  { emoji: '💌', label: 'จดหมายที่ 1', text: 'ใส่ข้อความของคุณที่นี่ซองที่ 1' },
-  { emoji: '🌸', label: 'จดหมายที่ 2', text: 'ใส่ข้อความของคุณที่นี่ซองที่ 2' },
-  { emoji: '⭐', label: 'จดหมายที่ 3', text: 'ใส่ข้อความของคุณที่นี่ซองที่ 3' },
-  { emoji: '🎀', label: 'จดหมายที่ 4', text: 'ใส่ข้อความของคุณที่นี่ซองที่ 4' },
-  { emoji: '💙', label: 'จดหมายที่ 5 (พิเศษ)', text: 'ใส่ข้อความของคุณที่นี่ซองที่ 5' },
+  { emoji: '<img src="images/1.jpg" style="width:150px;height:150px;object-fit:cover;border-radius:8px;">', label: 'จดหมายที่ 1', text: 'รู้มั้ยว่าเราเป็นเพื่อนกัน 7 ปีเเล้วอิน' },
+  { emoji: '<img src="images/2.jpg" style="width:150px;height:150px;object-fit:cover;border-radius:8px;">', label: 'จดหมายที่ 2', text: 'เขามีเรื่องที่อยากจะบอกเเกนานเเล้ว' },
+  { emoji: '<img src="images/3.jpg" style="width150px;height:150px;object-fit:cover;border-radius:8px;">', label: 'จดหมายที่ 3', text: 'เเต่ก็ไม่มีโอกาสจะบอกเเกเลย' },
+  { emoji: '<img src="images/4.jpg" style="width150px;height:150px;object-fit:cover;border-radius:8px;">', label: 'จดหมายที่ 4', text: 'เเล้วเรื่องที่เขาจะบอกคือ' },
+  { emoji: '<img src="images/5.jpg" style="width150px;height:150px;object-fit:cover;border-radius:8px;">', label: 'จดหมายที่ 5', text: '何も持っていません🤓' },
 ];
 
 
-const darkMessage = 'ขอให้วันนี้เป็นวันที่ดีที่สุด<br>และความสุขจงอยู่กับคุณตลอดไป';
+const darkMessage = 'เเก่ขึ้นอีกปีเเล้วนะครับคุณยายอิน<br>:D';
 // ============ END CONFIG ============
 
 
@@ -517,24 +521,26 @@ function buildEnvelopes() {
     const innerLabel = document.createElement('div');
     innerLabel.className = 'env-inner-label';
     innerLabel.id = `label${idx}`;
-    innerLabel.innerHTML = `
-      <span class="env-emoji">${d.emoji}</span>
-      <span class="env-label-text">${d.label}</span>
-      <span class="env-hint ${idx > 1 ? 'locked-hint' : ''}" id="hint${idx}">${idx > 1 ? '🔒 เปิดซองก่อนหน้าก่อน' : 'กดเพื่อเปิด'}</span>
-    `;
-    body.appendChild(innerLabel);
+ innerLabel.innerHTML = `
+  
+  <span class="env-label-text">${d.label}</span>
+  <span class="env-hint ${idx > 1 ? 'locked-hint' : ''}" id="hint${idx}">${idx > 1 ? '🔒 เปิดซองก่อนหน้าก่อน' : 'กดเพื่อเปิด'}</span>
+`;
+  
 
     // Letter card
     const card = document.createElement('div');
     card.className = 'letter-card';
     card.id = `card${idx}`;
     card.innerHTML = `
-      <span class="card-emoji">${d.emoji}</span>
-      <p class="card-text">${d.text}</p>
-    `;
+  <div class="card-emoji">${d.emoji}</div>
+  <p class="card-text">${d.text}</p>
+`;
 
     env.appendChild(flapContainer);
+    
     env.appendChild(body);
+    env.appendChild(innerLabel);
     env.appendChild(card);
 
 
@@ -579,7 +585,7 @@ function tryOpen(idx) {
 if (idx === letters.length) {
   const btn = document.createElement('button');
   btn.className = 'blow-btn';
-  btn.textContent = '🎂 ไปเป่าเค้กกัน!';
+  btn.textContent = '🎂 เป่าเค้กๆ';
   btn.onclick = () => goTo('p3');
 const btnWrap = document.createElement('div');
 btnWrap.style.cssText = 'width:100%; display:flex; justify-content:center; margin-top:24px;';
